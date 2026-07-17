@@ -1,0 +1,27 @@
+{
+  "name": "calledit",
+  "version": "1.0.0",
+  "description": "CalledIt — the World Cup second screen where bragging rights are provable. Powered by TxLINE live data on Solana.",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "build:web": "cd web && npm ci && npm run build",
+    "build:replay": "node scripts/build-replay.js",
+    "capture": "node scripts/capture.js",
+    "test": "node --test test/engine.test.js"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.0",
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.45.0"
+  }
+}

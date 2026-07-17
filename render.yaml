@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: calledit
+    env: node
+    plan: free
+    buildCommand: npm ci && cd web && npm ci && npm run build
+    startCommand: node server/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATA_MODE
+        value: auto
+      - key: TXLINE_BASE_URL
+        value: https://txline-dev.txodds.com
+      - key: TXLINE_API_TOKEN
+        sync: false
+      - key: ANCHOR_SECRET
+        sync: false
+      - key: ADMIN_KEY
+        sync: false
+      - key: REPLAY_SPEED
+        value: "2"
+      - key: DEMO_BOTS
+        value: "8"

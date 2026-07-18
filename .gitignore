@@ -10,3 +10,5 @@ track.json
 .env*
 !.env.example
 private/
+video/
+calledit-demo.mp4

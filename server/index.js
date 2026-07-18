@@ -71,8 +71,8 @@ function wireSession(session) {
     scheduleSnapshot(session, true);
   });
 
-  match.on('feed', item => broadcast(session, { type: 'feed', item }));
-  match.on('goal', g => broadcast(session, { type: 'goal', team: g.team, name: match.teamName(g.team) }));
+  match.on('feed', item => { if (!session.backfilling) broadcast(session, { type: 'feed', item }); });
+  match.on('goal', g => { if (!session.backfilling) broadcast(session, { type: 'goal', team: g.team, name: match.teamName(g.team) }); });
   match.on('goal_confirmed', () => scheduleSnapshot(session, true));
   match.on('status', () => scheduleSnapshot(session, true));
 }
@@ -142,6 +142,51 @@ function bootReplay() {
 
 let txClient = null;
 
+/**
+ * The TxLINE live SSE streams deliver only events emitted after connect —
+ * there is no replay on the stream itself. Without this, a server restart
+ * mid-match (e.g. a free-tier host waking up) shows 0-0 until the next
+ * scoring event. So on session start and on every stream (re)connect we
+ * replay the score + odds snapshots through the same ingest path; the Seq
+ * guard in MatchState makes the overlap with the live stream idempotent.
+ */
+async function fetchEventList(pathname) {
+  const res = await fetch(`${config.txline.host}${pathname}`, { headers: await txClient.headers() });
+  if (!res.ok) throw new Error(`${pathname} ${res.status}`);
+  const raw = await res.text();
+  try { const j = JSON.parse(raw); return Array.isArray(j) ? j : []; } catch { /* SSE-framed */ }
+  return raw.split(/\r?\n\r?\n/).map(b => {
+    const l = b.split(/\r?\n/).filter(x => x.startsWith('data:'));
+    if (!l.length) return null;
+    try { return JSON.parse(l.map(x => x.slice(5).trim()).join('')); } catch { return null; }
+  }).filter(Boolean);
+}
+
+async function backfillLiveSession(session) {
+  session.backfilling = true; // no goal splashes / feed pushes for old events
+  try {
+    // full in-play history first; tail snapshot as fallback
+    let events = [];
+    try { events = await fetchEventList(`/api/scores/updates/${session.match.fixtureId}`); } catch { /* pre-match */ }
+    if (!events.length) {
+      try { events = await fetchEventList(`/api/scores/snapshot/${session.match.fixtureId}`); } catch { /* no coverage yet */ }
+    }
+    events.sort((a, b) => (a.Seq ?? 0) - (b.Seq ?? 0));
+    for (const ev of events) session.match.ingest('score', ev);
+    const odds = await txClient.getJson(`/api/odds/snapshot/${session.match.fixtureId}`);
+    if (Array.isArray(odds)) {
+      for (const o of odds.sort((a, b) => a.Ts - b.Ts)) session.match.ingest('odds', o);
+    }
+    session.engine.tick();
+    scheduleSnapshot(session, true);
+    log.log(`[live] backfilled ${session.id}: score ${session.match.score[1]}-${session.match.score[2]}, status ${session.match.phaseName}`);
+  } catch (e) {
+    log.warn(`[live] backfill ${session.id} failed:`, e.message);
+  } finally {
+    session.backfilling = false;
+  }
+}
+
 async function pollLiveFixture() {
   if (!config.txline.apiToken) return;
   try {
@@ -181,11 +226,17 @@ async function pollLiveFixture() {
         session.engine.tick();
       });
       log.log(`[live] session ${id}: ${session.label} @ ${new Date(fx.StartTime).toISOString()}`);
+      backfillLiveSession(session);
       added = true;
     }
     if (added) {
       if (!txClient._streamsOpen) {
         txClient._streamsOpen = true;
+        txClient.on('stream_open', label => {
+          if (label !== 'score') return;
+          // stream (re)connected — replay whatever we missed while offline
+          for (const s of sessions.values()) if (s.mode === 'live') backfillLiveSession(s);
+        });
         txClient.openStream('/api/scores/stream', 'score');
         txClient.openStream('/api/odds/stream', 'odds');
       }

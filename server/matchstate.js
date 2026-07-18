@@ -168,6 +168,12 @@ class MatchState extends EventEmitter {
   }
 
   ingestScore(ev) {
+    // live streams have no backfill, so we replay /api/scores/snapshot on
+    // (re)connect; the Seq guard keeps snapshot + stream overlap idempotent
+    if (typeof ev.Seq === 'number') {
+      if (ev.Seq <= (this.lastSeq ?? -1)) return;
+      this.lastSeq = ev.Seq;
+    }
     const a = ev.Action;
     // team + player names arrive on the stream (live mode) via lineups events
     if (ev.Lineups) {

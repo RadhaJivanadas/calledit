@@ -8,6 +8,16 @@
 
 *Built for the TxODDS World Cup Hackathon — Consumer & Fan Experiences track.*
 
+<p align="center">
+  <a href="https://calledit-91m6.onrender.com"><img src="https://img.shields.io/badge/Live%20MVP-online-16a34a?style=flat-square" alt="Live MVP"></a>
+  <img src="https://img.shields.io/badge/Solana-devnet-9945FF?style=flat-square&logo=solana&logoColor=white" alt="Solana devnet">
+  <img src="https://img.shields.io/badge/data-TxLINE%20live%20%2B%20replay-0ea5e9?style=flat-square" alt="TxLINE live + replay">
+  <img src="https://img.shields.io/badge/receipts-anchored%20on--chain-fbbf24?style=flat-square" alt="Receipts anchored on-chain">
+  <img src="https://img.shields.io/badge/license-MIT-111?style=flat-square" alt="MIT">
+</p>
+
+**▶ Live MVP:** https://calledit-91m6.onrender.com &nbsp;·&nbsp; **Demo video:** https://youtu.be/REPLACE_ME &nbsp;·&nbsp; **API feedback:** [`docs/TXLINE_FEEDBACK.md`](docs/TXLINE_FEEDBACK.md)
+
 <img src="shots/05-match3.png" width="320" alt="CalledIt match screen" />
 
 </div>
@@ -24,7 +34,7 @@ Group chats are where great calls go to die. Screenshots are fakeable. Memories 
 
 CalledIt is a live second-screen game you open next to the TV:
 
-1. **The match talks to you.** TxLINE's event stream drives a live *momentum engine* — when Spain string together danger-zone possessions, the app flashes a hot card: *"Spain are surging — goal in the next 2 minutes?"* You get seconds to lock your call, often **before the TV commentators have caught up**.
+1. **The match talks to you.** TxLINE's event stream drives a live *momentum engine*. When Spain string together danger-zone possessions, the app flashes a hot card: *"Spain are surging — goal in the next 2 minutes?"* You get seconds to lock your call, often **before the TV commentators have caught up**.
 2. **Boldness pays.** Every card is priced from TxLINE **StablePrice consensus odds** — the same numbers the world's books agree on. Call the 76% penalty and earn +20. Call the 14% lightning goal and earn +370. Streaks multiply.
 3. **Winning mints proof.** A correct call becomes a **Called-It receipt**: a signed statement (what you called, when you locked it, what TxLINE event settled it) whose hash is committed to **Solana**. The receipt page shows *"locked in 2 minutes before it happened"* — and anyone can re-verify the chain: payload → sha256 → batch root → on-chain transaction.
 4. **Squads.** Create a squad, drop the 6-character code in the group chat, and the argument about who actually understands football is finally settled by a leaderboard.
@@ -128,7 +138,7 @@ The `/verify` page re-runs the whole chain in front of the user. The settling *e
 
 - **Free**: play, squads, receipts.
 - **Premium squads** (season pass): private leagues with prizes, custom card packs, historical stats.
-- **B2B white-label**: broadcasters and sportsbooks embed CalledIt as their second-screen layer — LiveLike-style engagement, but with *verifiable* settlement they don't have to operate themselves (TxLINE settles, the chain proves). Fan engagement platforms are a $10B+ market growing at ~20% CAGR; none of the incumbents can prove their settlements.
+- **B2B white-label**: broadcasters and sportsbooks embed CalledIt as their second-screen layer. Incumbents like LiveLike sell engagement widgets; none of them can prove a settlement. Here TxLINE settles and the chain proves, so the operator carries no trust burden at all.
 - **Sponsored moments**: "This VAR card brought to you by …" — native ad units that appear exactly at peak attention.
 
 ## Config reference

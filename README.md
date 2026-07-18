@@ -16,7 +16,7 @@
   <img src="https://img.shields.io/badge/license-MIT-111?style=flat-square" alt="MIT">
 </p>
 
-**▶ Live MVP:** https://calledit-91m6.onrender.com &nbsp;·&nbsp; **Demo video:** https://youtu.be/REPLACE_ME &nbsp;·&nbsp; **API feedback:** [`docs/TXLINE_FEEDBACK.md`](docs/TXLINE_FEEDBACK.md)
+**▶ Live MVP:** https://calledit-91m6.onrender.com &nbsp;·&nbsp; **Demo video:** https://www.youtube.com/watch?v=NrWTmIXUuLk &nbsp;·&nbsp; **API feedback:** [`docs/TXLINE_FEEDBACK.md`](docs/TXLINE_FEEDBACK.md)
 
 <img src="shots/05-match3.png" width="320" alt="CalledIt match screen" />
 
